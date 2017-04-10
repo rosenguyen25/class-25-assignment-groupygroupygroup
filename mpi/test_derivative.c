@@ -55,7 +55,16 @@ write(struct fld1d *x, int N, const char *filename)
 static void
 fill_ghosts(struct fld1d *x, int N)
 {
+  int rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
   /* F1(x, -1) = F1(x, N-1); */
+  if (rank == 1) {
+    MPI_Send(&F1(x, 49), 1, MPI_DOUBLE, 0, 111, MPI_COMM_WORLD);
+  } else { // rank == 0
+    MPI_Recv(&F1(x, -1), 1, MPI_DOUBLE, 1, 111, MPI_COMM_WORLD,
+	     MPI_STATUS_IGNORE);
+  }
   /* F1(x,  N) = F1(x, 0  ); */
 }
 
