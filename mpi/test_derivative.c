@@ -66,6 +66,12 @@ fill_ghosts(struct fld1d *x, int N)
 	     MPI_STATUS_IGNORE);
   }
   /* F1(x,  N) = F1(x, 0  ); */
+  if (rank == 0) {
+    MPI_Send(&F1(x, 0), 1, MPI_DOUBLE, 1, 111, MPI_COMM_WORLD);
+  } else { // rank == 1
+    MPI_Recv(&F1(x, 50), 1, MPI_DOUBLE, 0, 111, MPI_COMM_WORLD,
+	     MPI_STATUS_IGNORE);
+  }
 }
 
 // ----------------------------------------------------------------------
