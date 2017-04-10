@@ -109,13 +109,12 @@ main(int argc, char **argv)
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-  int ib, ie;
   assert(size == 2);
-  if (rank == 0) {
-    ib = 0; ie = 25;
-  } else {
-    ib = 25; ie = 50;
-  }
+  // we only handle the case where the number of points is evenly divisible by
+  // the number of procs
+  assert(N % size == 0);
+  int n = N / size; // number of points on each proc
+  int ib = rank * n, ie = (rank + 1) * n;
   
   struct fld1d *x = fld1d_create(ib-1, ie+1);
   struct fld1d *d = fld1d_create(ib  , ie  );
