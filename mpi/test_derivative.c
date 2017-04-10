@@ -53,27 +53,27 @@ write(struct fld1d *x, int N, const char *filename)
 // fills the ghost cells at either end of x
 
 static void
-fill_ghosts(struct fld1d *x, int N)
+fill_ghosts(struct fld1d *x, int ib, int ie, int N)
 {
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
   if (rank == 1) {
-    MPI_Send(&F1(x, 49), 1, MPI_DOUBLE, 0, 111, MPI_COMM_WORLD);
-    MPI_Send(&F1(x, 25), 1, MPI_DOUBLE, 0, 111, MPI_COMM_WORLD);
+    MPI_Send(&F1(x, ie-1), 1, MPI_DOUBLE, 0, 111, MPI_COMM_WORLD);
+    MPI_Send(&F1(x, ib  ), 1, MPI_DOUBLE, 0, 111, MPI_COMM_WORLD);
   } else { // rank == 0
-    MPI_Recv(&F1(x, -1), 1, MPI_DOUBLE, 1, 111, MPI_COMM_WORLD,
+    MPI_Recv(&F1(x, ib-1), 1, MPI_DOUBLE, 1, 111, MPI_COMM_WORLD,
 	     MPI_STATUS_IGNORE);
-    MPI_Recv(&F1(x, 25), 1, MPI_DOUBLE, 1, 111, MPI_COMM_WORLD,
+    MPI_Recv(&F1(x, ie  ), 1, MPI_DOUBLE, 1, 111, MPI_COMM_WORLD,
 	     MPI_STATUS_IGNORE);
   }
   if (rank == 0) {
-    MPI_Send(&F1(x, 0), 1, MPI_DOUBLE, 1, 111, MPI_COMM_WORLD);
-    MPI_Send(&F1(x, 24), 1, MPI_DOUBLE, 1, 111, MPI_COMM_WORLD);
+    MPI_Send(&F1(x, ib  ), 1, MPI_DOUBLE, 1, 111, MPI_COMM_WORLD);
+    MPI_Send(&F1(x, ie-1), 1, MPI_DOUBLE, 1, 111, MPI_COMM_WORLD);
   } else { // rank == 1
-    MPI_Recv(&F1(x, 50), 1, MPI_DOUBLE, 0, 111, MPI_COMM_WORLD,
+    MPI_Recv(&F1(x, ie  ), 1, MPI_DOUBLE, 0, 111, MPI_COMM_WORLD,
 	     MPI_STATUS_IGNORE);
-    MPI_Recv(&F1(x, 24), 1, MPI_DOUBLE, 0, 111, MPI_COMM_WORLD,
+    MPI_Recv(&F1(x, ib-1), 1, MPI_DOUBLE, 0, 111, MPI_COMM_WORLD,
 	     MPI_STATUS_IGNORE);
   }
 }
@@ -86,7 +86,7 @@ fill_ghosts(struct fld1d *x, int N)
 static void
 calc_derivative(struct fld1d *d, struct fld1d *x, int N)
 {
-  fill_ghosts(x, N);
+  fill_ghosts(x, d->ib, d->ie, N);
 
   double dx = 2. * M_PI / N;
 
