@@ -20,7 +20,7 @@ set_sine(struct fld1d *x, int N, int ib, int ie)
 
   for (int i = ib; i < ie; i++) {
     double xx = i * dx;
-    F1(x, i) = sin(xx);
+    F1(x, i) = sin(xx+1);
   }
 }
 
@@ -102,9 +102,9 @@ main(int argc, char **argv)
   struct fld1d *d = fld1d_create(ib  , ie  );
 
   set_sine(x, N, ib, ie);
-  write(x, N, "x");
 
   calc_derivative(d, x, N);
+  write(x, N, "x");
   write(d, N, "d");
 
   fld1d_destroy(d);
