@@ -74,7 +74,7 @@ fld1d_write(struct fld1d *x, int N, const char *filename)
   FILE *f = fopen(s, "w");
 
   for (int i = x->ib; i < x->ie; i++) {
-    double xx = i * dx;
+    double xx = (i + .5) * dx;
     fprintf(f, "%g %g\n", xx, F1(x, i));
   }
 
