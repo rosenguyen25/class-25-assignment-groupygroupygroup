@@ -55,18 +55,19 @@ write(struct fld1d *x, int N, const char *filename)
 static void
 fill_ghosts(struct fld1d *x, int ib, int ie, int N)
 {
-  int rank;
+  int rank, size;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
 
   // the MPI ranks of our right and left neighbors
-  int rank_right, rank_left;
-  if (rank == 0) {
-    rank_right = 1;
-    rank_left = 1;
-  } else if (rank == 1) {
+  int rank_right = rank + 1, rank_left = rank - 1;
+  if (rank_right == size) {
     rank_right = 0;
-    rank_left = 0;
   }
+  if (rank_left == -1) {
+    rank_left = size - 1;
+  }
+
   MPI_Send(&F1(x, ib  ), 1, MPI_DOUBLE, rank_left , 111, MPI_COMM_WORLD);
   MPI_Send(&F1(x, ie-1), 1, MPI_DOUBLE, rank_right, 111, MPI_COMM_WORLD);
 
