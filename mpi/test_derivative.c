@@ -60,13 +60,7 @@ fill_ghosts(struct fld1d *x, int ib, int ie, int N)
   MPI_Comm_size(MPI_COMM_WORLD, &size);
 
   // the MPI ranks of our right and left neighbors
-  int rank_right = rank + 1, rank_left = rank - 1;
-  if (rank_right == size) {
-    rank_right = 0;
-  }
-  if (rank_left == -1) {
-    rank_left = size - 1;
-  }
+  int rank_right = (rank + 1) % size, rank_left = (rank + size - 1) % size;
 
   MPI_Send(&F1(x, ib  ), 1, MPI_DOUBLE, rank_left , 111, MPI_COMM_WORLD);
   MPI_Send(&F1(x, ie-1), 1, MPI_DOUBLE, rank_right, 111, MPI_COMM_WORLD);
