@@ -12,6 +12,7 @@ test_derivative
 test_heat_eqn
 heat_eqn_solve
 
+.ipynb_checkpoints
 .deps
 Makefile
 Makefile.in
