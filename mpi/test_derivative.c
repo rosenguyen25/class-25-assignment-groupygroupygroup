@@ -58,23 +58,32 @@ fill_ghosts(struct fld1d *x, int ib, int ie, int N)
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
+  // the MPI ranks of our right and left neighbors
+  int rank_right, rank_left;
   if (rank == 0) {
-    MPI_Send(&F1(x, ib  ), 1, MPI_DOUBLE, 1, 111, MPI_COMM_WORLD);
-    MPI_Send(&F1(x, ie-1), 1, MPI_DOUBLE, 1, 111, MPI_COMM_WORLD);
+    rank_right = 1;
+    rank_left = 1;
   } else if (rank == 1) {
-    MPI_Send(&F1(x, ib  ), 1, MPI_DOUBLE, 0, 111, MPI_COMM_WORLD);
-    MPI_Send(&F1(x, ie-1), 1, MPI_DOUBLE, 0, 111, MPI_COMM_WORLD);
+    rank_right = 0;
+    rank_left = 0;
+  }
+  if (rank == 0) {
+    MPI_Send(&F1(x, ib  ), 1, MPI_DOUBLE, rank_left , 111, MPI_COMM_WORLD);
+    MPI_Send(&F1(x, ie-1), 1, MPI_DOUBLE, rank_right, 111, MPI_COMM_WORLD);
+  } else if (rank == 1) {
+    MPI_Send(&F1(x, ib  ), 1, MPI_DOUBLE, rank_left , 111, MPI_COMM_WORLD);
+    MPI_Send(&F1(x, ie-1), 1, MPI_DOUBLE, rank_right, 111, MPI_COMM_WORLD);
   }
 
   if (rank == 0) {
-    MPI_Recv(&F1(x, ie  ), 1, MPI_DOUBLE, 1, 111, MPI_COMM_WORLD,
+    MPI_Recv(&F1(x, ie  ), 1, MPI_DOUBLE, rank_right, 111, MPI_COMM_WORLD,
 	     MPI_STATUS_IGNORE);
-    MPI_Recv(&F1(x, ib-1), 1, MPI_DOUBLE, 1, 111, MPI_COMM_WORLD,
+    MPI_Recv(&F1(x, ib-1), 1, MPI_DOUBLE, rank_left , 111, MPI_COMM_WORLD,
 	     MPI_STATUS_IGNORE);
   } else if (rank == 1) {
-    MPI_Recv(&F1(x, ie  ), 1, MPI_DOUBLE, 0, 111, MPI_COMM_WORLD,
+    MPI_Recv(&F1(x, ie  ), 1, MPI_DOUBLE, rank_right, 111, MPI_COMM_WORLD,
 	     MPI_STATUS_IGNORE);
-    MPI_Recv(&F1(x, ib-1), 1, MPI_DOUBLE, 0, 111, MPI_COMM_WORLD,
+    MPI_Recv(&F1(x, ib-1), 1, MPI_DOUBLE, rank_left , 111, MPI_COMM_WORLD,
 	     MPI_STATUS_IGNORE);
   }
 }
