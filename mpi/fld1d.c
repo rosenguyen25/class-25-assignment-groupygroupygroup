@@ -58,7 +58,7 @@ fld1d_is_almost_equal(struct fld1d *a, struct fld1d *b, double eps)
 }
 
 // ----------------------------------------------------------------------
-// fl1d_write
+// fld1d_write
 //
 // writes the array to disk
 // FIXME, this hardcodes a domain size of 2 pi
@@ -81,3 +81,15 @@ fld1d_write(struct fld1d *x, int N, const char *filename)
   fclose(f);
 }
 
+// ----------------------------------------------------------------------
+// fld1d_axpy
+//
+// calculate y = a*x + y
+
+void
+fld1d_axpy(struct fld1d *y, double alpha, struct fld1d *x, int ib, int ie)
+{
+  for (int i = ib; i < ie; i++) {
+    F1(y, i) += alpha * F1(x, i);
+  }
+}

@@ -10,6 +10,7 @@ message_mpi_2
 test_integrate
 test_derivative
 test_heat_eqn
+heat_eqn_solve
 
 .deps
 Makefile

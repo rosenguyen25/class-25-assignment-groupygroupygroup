@@ -8,29 +8,6 @@
 #include <assert.h>
 
 // ----------------------------------------------------------------------
-// fl1d_write
-//
-// writes the array to disk
-
-static void
-fld1d_write(struct fld1d *x, int N, const char *filename)
-{
-  double dx = 2. * M_PI / N;
-  int rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  char s[100];
-  snprintf(s, 100, "%s-%d.asc", filename, rank);
-  FILE *f = fopen(s, "w");
-
-  for (int i = x->ib; i < x->ie; i++) {
-    double xx = i * dx;
-    fprintf(f, "%g %g\n", xx, F1(x, i));
-  }
-
-  fclose(f);
-}
-
-// ----------------------------------------------------------------------
 // main
 //
 // tests that the r.h.s (2nd derivative) for a cosine is -cosine.

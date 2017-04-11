@@ -22,8 +22,8 @@ main(int argc, char **argv)
   double dx = 2. * M_PI / N;
   double dt = .5 * dx * dx / kappa; // pick dt to satisfy CFL condition
 
-  struct fld1d *x = fld1d_create(N, 1);
-  struct fld1d *rhs = fld1d_create(N, 1);
+  struct fld1d *x = fld1d_create(-1, N+1);
+  struct fld1d *rhs = fld1d_create(0, N);
 
   // set up initial condition
   for (int i = 0; i < N; i++) {
@@ -42,11 +42,11 @@ main(int argc, char **argv)
     // A simple forward Euler step x^{n+1} = x^{n} + dt * rhs(x^n)
     // works fine for integrating this equation:
 
-    // calculate an example r.h.s., which is just the spatial derivative
+    // calculate rhs first
     heat_eqn_calc_rhs(x, rhs, dx, kappa, 0, N);
 
-    // update solution: x += dt * rhs
-    fld1d_axpy(x, dt, rhs);
+    // then update solution: x += dt * rhs
+    fld1d_axpy(x, dt, rhs, 0, N);
   }
 
   fld1d_destroy(x);

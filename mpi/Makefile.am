@@ -10,10 +10,15 @@ bin_PROGRAMS = \
 	message_mpi_2 \
 	test_integrate \
 	test_derivative \
-	test_heat_eqn
+	test_heat_eqn \
+	heat_eqn_solve
 
 test_heat_eqn_SOURCES = \
 	test_heat_eqn.c \
+	heat_eqn.c
+
+heat_eqn_solve_SOURCES = \
+	heat_eqn_solve.c \
 	heat_eqn.c
 
 LDADD = libfld1d.a
