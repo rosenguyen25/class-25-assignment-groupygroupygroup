@@ -9,7 +9,12 @@ bin_PROGRAMS = \
 	message_mpi \
 	message_mpi_2 \
 	test_integrate \
-	test_derivative
+	test_derivative \
+	test_heat_eqn
+
+test_heat_eqn_SOURCES = \
+	test_heat_eqn.c \
+	heat_eqn.c
 
 LDADD = libfld1d.a
 
@@ -18,4 +23,6 @@ lib_LIBRARIES = libfld1d.a
 libfld1d_a_SOURCES = \
 	fld1d.c \
 	fld1d.h
+
+TESTS = test_heat_eqn
 

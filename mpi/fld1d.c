@@ -1,6 +1,8 @@
 
 #include "fld1d.h"
 
+#include <math.h>
+
 // ----------------------------------------------------------------------
 // fld1d_create
 //
@@ -32,5 +34,24 @@ fld1d_destroy(struct fld1d *v)
   // access the fld1d after we called fld1d_destroy()
   v->vals = NULL;
   free(v);
+}
+
+// ----------------------------------------------------------------------
+// fld1d_is_almost_equal
+//
+// this function is checks whether a and b are equal up to a given threshold
+
+bool
+fld1d_is_almost_equal(struct fld1d *a, struct fld1d *b, double eps)
+{
+  // make sure the two fields cover the same index range
+  assert(a->ib == b->ib && a->ie == b->ie);
+
+  for (int i = a->ib; i < a->ie; i++) {
+    if (fabs(F1(a, i) - F1(b, i)) > eps) {
+      return false;
+    }
+  }
+  return true;
 }
 
