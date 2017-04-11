@@ -2,6 +2,8 @@
 #include "fld1d.h"
 
 #include <math.h>
+#include <stdio.h>
+#include <mpi.h>
 
 // ----------------------------------------------------------------------
 // fld1d_create
@@ -53,5 +55,29 @@ fld1d_is_almost_equal(struct fld1d *a, struct fld1d *b, double eps)
     }
   }
   return true;
+}
+
+// ----------------------------------------------------------------------
+// fl1d_write
+//
+// writes the array to disk
+// FIXME, this hardcodes a domain size of 2 pi
+
+void
+fld1d_write(struct fld1d *x, int N, const char *filename)
+{
+  double dx = 2. * M_PI / N;
+  int rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  char s[100];
+  snprintf(s, 100, "%s-%d.asc", filename, rank);
+  FILE *f = fopen(s, "w");
+
+  for (int i = x->ib; i < x->ie; i++) {
+    double xx = i * dx;
+    fprintf(f, "%g %g\n", xx, F1(x, i));
+  }
+
+  fclose(f);
 }
 

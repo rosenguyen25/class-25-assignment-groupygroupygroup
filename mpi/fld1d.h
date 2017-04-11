@@ -29,5 +29,6 @@ struct fld1d {
 struct fld1d *fld1d_create(int N, int sw);
 void fld1d_destroy(struct fld1d *v);
 bool fld1d_is_almost_equal(struct fld1d *a, struct fld1d *b, double eps);
+void fld1d_write(struct fld1d *x, int N, const char *filename);
 
 #endif
