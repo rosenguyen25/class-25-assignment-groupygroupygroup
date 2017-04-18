@@ -11,7 +11,8 @@ bin_PROGRAMS = \
 	test_integrate \
 	test_derivative \
 	test_heat_eqn \
-	heat_eqn_solve
+	heat_eqn_solve \
+	mpi_dl_test
 
 test_heat_eqn_SOURCES = \
 	test_heat_eqn.c \

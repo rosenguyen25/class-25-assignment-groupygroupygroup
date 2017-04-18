@@ -11,6 +11,7 @@ test_integrate
 test_derivative
 test_heat_eqn
 heat_eqn_solve
+mpi_dl_test
 
 .ipynb_checkpoints
 .deps
