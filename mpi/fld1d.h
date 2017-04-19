@@ -16,6 +16,8 @@ struct fld1d {
   int ib; // starting index of local part
   int ie; // end index (+1) of local part
   int n_ghosts; // number of ghost points (outside of [ib,ie[ )
+  int rank; // this process's rank, which determines our local range
+  int rank_left, rank_right; // our neighbors (for ghost point communication)
 };
 
 #ifdef BOUNDSCHECK

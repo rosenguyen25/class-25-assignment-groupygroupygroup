@@ -29,6 +29,12 @@ fld1d_create(int N, int n_ghosts)
   v->n_ghosts = n_ghosts;
   v->vals = calloc(n + 2 * n_ghosts, sizeof(v->vals[0]));
 
+  // our MPI rank
+  v->rank = rank;
+  // the MPI ranks of our right and left neighbors
+  v->rank_right = (rank + 1) % size;
+  v->rank_left  = (rank + size - 1) % size;
+  
   return v;
 }
 
@@ -74,10 +80,8 @@ fld1d_is_almost_equal(struct fld1d *a, struct fld1d *b, double eps)
 void
 fld1d_write(struct fld1d *x, const char *filename, double dx)
 {
-  int rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   char s[100];
-  snprintf(s, 100, "%s-%d.asc", filename, rank);
+  snprintf(s, 100, "%s-%d.asc", filename, x->rank);
   FILE *f = fopen(s, "w");
 
   for (int i = x->ib - x->n_ghosts; i < x->ie + x->n_ghosts; i++) {
@@ -112,20 +116,14 @@ fld1d_axpy(struct fld1d *y, double alpha, struct fld1d *x)
 void
 fld1d_fill_ghosts_periodic(struct fld1d *x)
 {
-  int rank, size;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  MPI_Comm_size(MPI_COMM_WORLD, &size);
-
   int ib = x->ib, ie = x->ie;
-  // the MPI ranks of our right and left neighbors
-  int rank_right = (rank + 1) % size, rank_left = (rank + size - 1) % size;
 
-  MPI_Send(&F1(x, ib  ), 1, MPI_DOUBLE, rank_left , 111, MPI_COMM_WORLD);
-  MPI_Send(&F1(x, ie-1), 1, MPI_DOUBLE, rank_right, 111, MPI_COMM_WORLD);
+  MPI_Send(&F1(x, ib  ), 1, MPI_DOUBLE, x->rank_left , 111, MPI_COMM_WORLD);
+  MPI_Send(&F1(x, ie-1), 1, MPI_DOUBLE, x->rank_right, 111, MPI_COMM_WORLD);
 
-  MPI_Recv(&F1(x, ie  ), 1, MPI_DOUBLE, rank_right, 111, MPI_COMM_WORLD,
+  MPI_Recv(&F1(x, ie  ), 1, MPI_DOUBLE, x->rank_right, 111, MPI_COMM_WORLD,
 	   MPI_STATUS_IGNORE);
-  MPI_Recv(&F1(x, ib-1), 1, MPI_DOUBLE, rank_left , 111, MPI_COMM_WORLD,
+  MPI_Recv(&F1(x, ib-1), 1, MPI_DOUBLE, x->rank_left , 111, MPI_COMM_WORLD,
 	   MPI_STATUS_IGNORE);
 }
 
