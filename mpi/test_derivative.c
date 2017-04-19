@@ -39,7 +39,7 @@ write(struct fld1d *x, int N, const char *filename)
   snprintf(s, 100, "%s-%d.asc", filename, rank);
   FILE *f = fopen(s, "w");
 
-  for (int i = x->ib; i < x->ie; i++) {
+  for (int i = x->ib - x->n_ghosts; i < x->ie + x->n_ghosts; i++) {
     double xx = i * dx;
     fprintf(f, "%g %g\n", xx, F1(x, i));
   }
@@ -79,7 +79,7 @@ fill_ghosts(struct fld1d *x, int ib, int ie, int N)
 static void
 calc_derivative(struct fld1d *d, struct fld1d *x, int N)
 {
-  fill_ghosts(x, d->ib, d->ie, N);
+  fill_ghosts(x, x->ib, x->ie, N);
 
   double dx = 2. * M_PI / N;
 

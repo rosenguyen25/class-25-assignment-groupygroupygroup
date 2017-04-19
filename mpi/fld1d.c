@@ -16,9 +16,10 @@ fld1d_create(int ib, int ie, int n_ghosts)
   // allocate fld1d struct
   struct fld1d *v = calloc(1, sizeof(*v));
 
-  v->ib = ib - n_ghosts;
-  v->ie = ie + n_ghosts;
-  v->vals = calloc(v->ie - v->ib, sizeof(v->vals[0]));
+  v->ib = ib;
+  v->ie = ie;
+  v->n_ghosts = n_ghosts;
+  v->vals = calloc(v->ie - v->ib + 2 * n_ghosts, sizeof(v->vals[0]));
 
   return v;
 }
@@ -73,7 +74,7 @@ fld1d_write(struct fld1d *x, int N, const char *filename)
   snprintf(s, 100, "%s-%d.asc", filename, rank);
   FILE *f = fopen(s, "w");
 
-  for (int i = x->ib; i < x->ie; i++) {
+  for (int i = x->ib - x->n_ghosts; i < x->ie + x->n_ghosts; i++) {
     double xx = (i + .5) * dx;
     fprintf(f, "%g %g\n", xx, F1(x, i));
   }

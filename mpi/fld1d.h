@@ -15,15 +15,17 @@ struct fld1d {
   double *vals;
   int ib; // starting index of local part
   int ie; // end index (+1) of local part
+  int n_ghosts; // number of ghost points (outside of [ib,ie[ )
 };
 
 #ifdef BOUNDSCHECK
 #define F1(v, i) (*({							\
-	assert((i) >= (v)->ib && (i) < (v)->ie);			\
-	&((v)->vals[(i) - (v)->ib]);					\
+	assert((i) >= (v)->ib - (v)->n_ghosts);				\
+	assert((i) < (v)->ie + (v)->n_ghosts);				\
+	&((v)->vals[(i) - ((v)->ib - (v)->n_ghosts)]);			\
       })) 
 #else
-#define F1(v, i) ((v)->vals[(i) - (v)->ib])
+#define F1(v, i) ((v)->vals[(i) - ((v)->ib - (v)->n_ghosts)])
 #endif
 
 struct fld1d *fld1d_create(int ib, int ie, int n_ghosts);
