@@ -108,8 +108,8 @@ main(int argc, char **argv)
   int n = N / size; // number of points on each proc
   int ib = rank * n, ie = (rank + 1) * n;
   
-  struct fld1d *x = fld1d_create(ib-1, ie+1);
-  struct fld1d *d = fld1d_create(ib  , ie  );
+  struct fld1d *x = fld1d_create(ib, ie, 1);
+  struct fld1d *d = fld1d_create(ib, ie, 0);
 
   set_sine(x, N, ib, ie);
 

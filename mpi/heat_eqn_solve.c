@@ -22,8 +22,8 @@ main(int argc, char **argv)
   double dx = 2. * M_PI / N;
   double dt = .5 * dx * dx / kappa; // pick dt to satisfy CFL condition
 
-  struct fld1d *x = fld1d_create(-1, N+1);
-  struct fld1d *rhs = fld1d_create(0, N);
+  struct fld1d *x = fld1d_create(0, N, 1);
+  struct fld1d *rhs = fld1d_create(0, N, 0);
 
   // set up initial condition
   for (int i = 0; i < N; i++) {

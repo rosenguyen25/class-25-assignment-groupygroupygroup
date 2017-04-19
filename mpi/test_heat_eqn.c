@@ -20,9 +20,9 @@ main(int argc, char **argv)
   const int N = 100;
   double dx = 2. * M_PI / N;
 
-  struct fld1d *x = fld1d_create(-1, N+1);
-  struct fld1d *rhs = fld1d_create(0, N);
-  struct fld1d *neg_cos = fld1d_create(0, N);
+  struct fld1d *x = fld1d_create(0, N, 1);
+  struct fld1d *rhs = fld1d_create(0, N, 0);
+  struct fld1d *neg_cos = fld1d_create(0, N, 0);
 
   // put a discretized cosine into x,
   // and negative cosine into neg_cos, to be used to check the result.

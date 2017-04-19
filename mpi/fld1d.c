@@ -11,13 +11,13 @@
 // allocates and initializes a fld1d, setting all elements to zero
 
 struct fld1d *
-fld1d_create(int ib, int ie)
+fld1d_create(int ib, int ie, int n_ghosts)
 {
   // allocate fld1d struct
   struct fld1d *v = calloc(1, sizeof(*v));
 
-  v->ib = ib;
-  v->ie = ie;
+  v->ib = ib - n_ghosts;
+  v->ie = ie + n_ghosts;
   v->vals = calloc(v->ie - v->ib, sizeof(v->vals[0]));
 
   return v;
