@@ -23,28 +23,6 @@ set_sine(struct fld1d *x, double dx)
 }
 
 // ----------------------------------------------------------------------
-// write
-//
-// writes the array to disk
-
-static void
-write(struct fld1d *x, const char *filename, double dx)
-{
-  int rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  char s[100];
-  snprintf(s, 100, "%s-%d.asc", filename, rank);
-  FILE *f = fopen(s, "w");
-
-  for (int i = x->ib - x->n_ghosts; i < x->ie + x->n_ghosts; i++) {
-    double xx = (i +.5 ) * dx;
-    fprintf(f, "%g %g\n", xx, F1(x, i));
-  }
-
-  fclose(f);
-}
-
-// ----------------------------------------------------------------------
 // fill_ghosts
 //
 // fills the ghost cells at either end of x
@@ -113,8 +91,8 @@ main(int argc, char **argv)
   set_sine(x, dx);
 
   calc_derivative(d, x, dx);
-  write(x, "x", dx);
-  write(d, "d", dx);
+  fld1d_write(x, "x", dx);
+  fld1d_write(d, "d", dx);
 
   fld1d_destroy(d);
   fld1d_destroy(x);
