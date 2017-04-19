@@ -13,13 +13,14 @@ int
 main(int argc, char **argv)
 {
   const int N = 100;
+  const double L = 2. * M_PI;
   const int n_timesteps = 200;
   const int out_every = 10;
   const double kappa = .01; 
 
   MPI_Init(&argc, &argv);
 
-  double dx = 2. * M_PI / N;
+  double dx = L / N;
   double dt = .5 * dx * dx / kappa; // pick dt to satisfy CFL condition
 
   struct fld1d *x = fld1d_create(0, N, 1);
@@ -36,7 +37,7 @@ main(int argc, char **argv)
     if (n % out_every == 0) {
       char fname[10];
       sprintf(fname, "x%d", n);
-      fld1d_write(x, N, fname);
+      fld1d_write(x, fname, dx);
     }
 
     // A simple forward Euler step x^{n+1} = x^{n} + dt * rhs(x^n)

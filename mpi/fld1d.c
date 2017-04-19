@@ -62,12 +62,10 @@ fld1d_is_almost_equal(struct fld1d *a, struct fld1d *b, double eps)
 // fld1d_write
 //
 // writes the array to disk
-// FIXME, this hardcodes a domain size of 2 pi
 
 void
-fld1d_write(struct fld1d *x, int N, const char *filename)
+fld1d_write(struct fld1d *x, const char *filename, double dx)
 {
-  double dx = 2. * M_PI / N;
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   char s[100];

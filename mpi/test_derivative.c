@@ -14,10 +14,8 @@
 // initializes the array x with the sine function
 
 static void
-set_sine(struct fld1d *x, int N)
+set_sine(struct fld1d *x, double dx)
 {
-  double dx = 2. * M_PI / N;
-
   for (int i = x->ib; i < x->ie; i++) {
     double xx = i * dx;
     F1(x, i) = sin(xx+1);
@@ -30,9 +28,8 @@ set_sine(struct fld1d *x, int N)
 // writes the array to disk
 
 static void
-write(struct fld1d *x, int N, const char *filename)
+write(struct fld1d *x, const char *filename, double dx)
 {
-  double dx = 2. * M_PI / N;
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   char s[100];
@@ -78,11 +75,9 @@ fill_ghosts(struct fld1d *x)
 // calculates a 2nd order centered difference approximation to the derivative
 
 static void
-calc_derivative(struct fld1d *d, struct fld1d *x, int N)
+calc_derivative(struct fld1d *d, struct fld1d *x, double dx)
 {
   fill_ghosts(x);
-
-  double dx = 2. * M_PI / N;
 
   for (int i = d->ib; i < d->ie; i++) {
     F1(d, i) = (F1(x, i+1) - F1(x, i-1)) / (2. * dx);
@@ -96,6 +91,7 @@ int
 main(int argc, char **argv)
 {
   const int N = 50;
+  const double L = 2. * M_PI;
   
   MPI_Init(&argc, &argv);
 
@@ -108,15 +104,17 @@ main(int argc, char **argv)
   assert(N % size == 0);
   int n = N / size; // number of points on each proc
   int ib = rank * n, ie = (rank + 1) * n;
+
+  double dx = L / N;
   
   struct fld1d *x = fld1d_create(ib, ie, 1);
   struct fld1d *d = fld1d_create(ib, ie, 0);
 
-  set_sine(x, N);
+  set_sine(x, dx);
 
-  calc_derivative(d, x, N);
-  write(x, N, "x");
-  write(d, N, "d");
+  calc_derivative(d, x, dx);
+  write(x, "x", dx);
+  write(d, "d", dx);
 
   fld1d_destroy(d);
   fld1d_destroy(x);

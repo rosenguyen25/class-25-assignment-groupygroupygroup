@@ -18,7 +18,9 @@ main(int argc, char **argv)
   MPI_Init(&argc, &argv);
 
   const int N = 100;
-  double dx = 2. * M_PI / N;
+  const double L = 2. * M_PI;
+
+  double dx = L / N;
 
   struct fld1d *x = fld1d_create(0, N, 1);
   struct fld1d *rhs = fld1d_create(0, N, 0);
@@ -31,11 +33,11 @@ main(int argc, char **argv)
     F1(x, i) = cos(xx);
     F1(neg_cos, i) = - cos(xx);
   }
-  fld1d_write(x, N, "x");
+  fld1d_write(x, "x", dx);
 
   // calculate an example r.h.s., which is pretty much just the 2nd spatial derivative
   heat_eqn_calc_rhs(x, rhs, dx, 1.);
-  fld1d_write(rhs, N, "rhs");
+  fld1d_write(rhs, "rhs", dx);
 
   // verify that the derivative we calculated is negative sine
   assert(fld1d_is_almost_equal(rhs, neg_cos, 1e-3));
