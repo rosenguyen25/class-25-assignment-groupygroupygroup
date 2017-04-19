@@ -17,7 +17,7 @@ static void
 set_sine(struct fld1d *x, double dx)
 {
   for (int i = x->ib; i < x->ie; i++) {
-    double xx = i * dx;
+    double xx = (i + .5) * dx;
     F1(x, i) = sin(xx+1);
   }
 }
@@ -37,7 +37,7 @@ write(struct fld1d *x, const char *filename, double dx)
   FILE *f = fopen(s, "w");
 
   for (int i = x->ib - x->n_ghosts; i < x->ie + x->n_ghosts; i++) {
-    double xx = i * dx;
+    double xx = (i +.5 ) * dx;
     fprintf(f, "%g %g\n", xx, F1(x, i));
   }
 
