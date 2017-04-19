@@ -6,6 +6,14 @@
 #include <mpi.h>
 
 // ----------------------------------------------------------------------
+// options
+//
+// if fld1d_option_write_single_file is true, fld1d_write() will
+// gather the data from all procs and write it all into one file
+
+bool fld1d_option_write_single_file;
+
+// ----------------------------------------------------------------------
 // fld1d_create
 //
 // allocates and initializes a fld1d, setting all elements to zero
@@ -73,12 +81,12 @@ fld1d_is_almost_equal(struct fld1d *a, struct fld1d *b, double eps)
 }
 
 // ----------------------------------------------------------------------
-// fld1d_write
+// fld1d_write_per_proc
 //
 // writes the array to disk
 
-void
-fld1d_write(struct fld1d *x, const char *filename, double dx)
+static void
+fld1d_write_per_proc(struct fld1d *x, const char *filename, double dx)
 {
   char s[100];
   snprintf(s, 100, "%s-%d.asc", filename, x->rank);
@@ -90,6 +98,56 @@ fld1d_write(struct fld1d *x, const char *filename, double dx)
   }
 
   fclose(f);
+}
+
+// ----------------------------------------------------------------------
+// fld1d_write_single_file
+//
+// writes the array to disk
+
+static void
+fld1d_write_single_file(struct fld1d *x, const char *filename, double dx)
+{
+  int size;
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+  int n = x->ie - x->ib;
+  int N = n * size;
+
+  double *global = NULL;
+  if (x->rank == 0) {
+    global = calloc(N, sizeof(*global));
+  }
+  
+  MPI_Gather(&F1(x, x->ib), n, MPI_DOUBLE,
+	     global, n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+  if (x->rank == 0) {
+    char s[100];
+    snprintf(s, 100, "%s.asc", filename);
+    FILE *f = fopen(s, "w");
+
+    for (int i = 0; i < N; i++) {
+      double xx = (i + .5) * dx;
+      fprintf(f, "%g %g\n", xx, global[i]);
+    }
+
+    fclose(f);
+    free(global);
+  }
+}
+
+// ----------------------------------------------------------------------
+// fld1d_write
+
+void
+fld1d_write(struct fld1d *x, const char *filename, double dx)
+{
+  if (fld1d_option_write_single_file) {
+    fld1d_write_single_file(x, filename, dx);
+  } else {
+    fld1d_write_per_proc(x, filename, dx);
+  }
 }
 
 // ----------------------------------------------------------------------

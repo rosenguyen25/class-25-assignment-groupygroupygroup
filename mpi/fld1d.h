@@ -37,4 +37,6 @@ void fld1d_write(struct fld1d *x, const char *filename, double dx);
 void fld1d_axpy(struct fld1d *y, double alpha, struct fld1d *x);
 void fld1d_fill_ghosts_periodic(struct fld1d *x);
 
+extern bool fld1d_option_write_single_file;
+
 #endif

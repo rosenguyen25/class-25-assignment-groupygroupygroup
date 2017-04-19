@@ -20,6 +20,8 @@ main(int argc, char **argv)
 
   MPI_Init(&argc, &argv);
 
+  fld1d_option_write_single_file = true;
+
   double dx = L / N;
   double dt = .5 * dx * dx / kappa; // pick dt to satisfy CFL condition
 
