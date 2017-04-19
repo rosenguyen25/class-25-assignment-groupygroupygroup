@@ -47,7 +47,7 @@ main(int argc, char **argv)
     heat_eqn_calc_rhs(x, rhs, dx, kappa);
 
     // then update solution: x += dt * rhs
-    fld1d_axpy(x, dt, rhs, 0, N);
+    fld1d_axpy(x, dt, rhs);
   }
 
   fld1d_destroy(x);

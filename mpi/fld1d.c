@@ -86,9 +86,12 @@ fld1d_write(struct fld1d *x, const char *filename, double dx)
 // calculate y = a*x + y
 
 void
-fld1d_axpy(struct fld1d *y, double alpha, struct fld1d *x, int ib, int ie)
+fld1d_axpy(struct fld1d *y, double alpha, struct fld1d *x)
 {
-  for (int i = ib; i < ie; i++) {
+  // make sure the two fields cover the same index range
+  assert(x->ib == y->ib && x->ie == y->ie);
+  
+  for (int i = y->ib; i < y->ie; i++) {
     F1(y, i) += alpha * F1(x, i);
   }
 }
