@@ -11,15 +11,23 @@
 // allocates and initializes a fld1d, setting all elements to zero
 
 struct fld1d *
-fld1d_create(int ib, int ie, int n_ghosts)
+fld1d_create(int N, int n_ghosts)
 {
   // allocate fld1d struct
   struct fld1d *v = calloc(1, sizeof(*v));
 
-  v->ib = ib;
-  v->ie = ie;
+  int rank, size;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+  // we only handle the case where the number of points is evenly divisible by
+  // the number of procs
+  assert(N % size == 0);
+  int n = N / size; // number of points on each proc
+  v->ib = rank * n;
+  v->ie = (rank + 1) * n;
   v->n_ghosts = n_ghosts;
-  v->vals = calloc(v->ie - v->ib + 2 * n_ghosts, sizeof(v->vals[0]));
+  v->vals = calloc(n + 2 * n_ghosts, sizeof(v->vals[0]));
 
   return v;
 }

@@ -22,9 +22,9 @@ main(int argc, char **argv)
 
   double dx = L / N;
 
-  struct fld1d *x = fld1d_create(0, N, 1);
-  struct fld1d *rhs = fld1d_create(0, N, 0);
-  struct fld1d *neg_cos = fld1d_create(0, N, 0);
+  struct fld1d *x = fld1d_create(N, 1);
+  struct fld1d *rhs = fld1d_create(N, 0);
+  struct fld1d *neg_cos = fld1d_create(N, 0);
 
   // put a discretized cosine into x,
   // and negative cosine into neg_cos, to be used to check the result.
