@@ -14,11 +14,11 @@
 // initializes the array x with the sine function
 
 static void
-set_sine(struct fld1d *x, int N, int ib, int ie)
+set_sine(struct fld1d *x, int N)
 {
   double dx = 2. * M_PI / N;
 
-  for (int i = ib; i < ie; i++) {
+  for (int i = x->ib; i < x->ie; i++) {
     double xx = i * dx;
     F1(x, i) = sin(xx+1);
   }
@@ -53,12 +53,13 @@ write(struct fld1d *x, int N, const char *filename)
 // fills the ghost cells at either end of x
 
 static void
-fill_ghosts(struct fld1d *x, int ib, int ie, int N)
+fill_ghosts(struct fld1d *x)
 {
   int rank, size;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
 
+  int ib = x->ib, ie = x->ie;
   // the MPI ranks of our right and left neighbors
   int rank_right = (rank + 1) % size, rank_left = (rank + size - 1) % size;
 
@@ -79,7 +80,7 @@ fill_ghosts(struct fld1d *x, int ib, int ie, int N)
 static void
 calc_derivative(struct fld1d *d, struct fld1d *x, int N)
 {
-  fill_ghosts(x, x->ib, x->ie, N);
+  fill_ghosts(x);
 
   double dx = 2. * M_PI / N;
 
@@ -111,7 +112,7 @@ main(int argc, char **argv)
   struct fld1d *x = fld1d_create(ib, ie, 1);
   struct fld1d *d = fld1d_create(ib, ie, 0);
 
-  set_sine(x, N, ib, ie);
+  set_sine(x, N);
 
   calc_derivative(d, x, N);
   write(x, N, "x");

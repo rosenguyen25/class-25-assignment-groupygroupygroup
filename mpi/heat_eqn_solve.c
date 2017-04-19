@@ -43,7 +43,7 @@ main(int argc, char **argv)
     // works fine for integrating this equation:
 
     // calculate rhs first
-    heat_eqn_calc_rhs(x, rhs, dx, kappa, 0, N);
+    heat_eqn_calc_rhs(x, rhs, dx, kappa);
 
     // then update solution: x += dt * rhs
     fld1d_axpy(x, dt, rhs, 0, N);

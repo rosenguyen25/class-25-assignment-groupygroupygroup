@@ -34,7 +34,7 @@ main(int argc, char **argv)
   fld1d_write(x, N, "x");
 
   // calculate an example r.h.s., which is pretty much just the 2nd spatial derivative
-  heat_eqn_calc_rhs(x, rhs, dx, 1., 0, N);
+  heat_eqn_calc_rhs(x, rhs, dx, 1.);
   fld1d_write(rhs, N, "rhs");
 
   // verify that the derivative we calculated is negative sine
