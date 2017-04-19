@@ -27,7 +27,7 @@ main(int argc, char **argv)
   struct fld1d *rhs = fld1d_create(N, 0);
 
   // set up initial condition
-  for (int i = 0; i < N; i++) {
+  for (int i = x->ib; i < x->ie; i++) {
     double xx = (i + .5) * dx;
     F1(x, i) = exp(-sqr(xx - M_PI) / sqr(.5));
   }

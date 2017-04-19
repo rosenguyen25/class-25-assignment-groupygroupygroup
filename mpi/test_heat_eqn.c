@@ -28,7 +28,7 @@ main(int argc, char **argv)
 
   // put a discretized cosine into x,
   // and negative cosine into neg_cos, to be used to check the result.
-  for (int i = 0; i < N; i++) {
+  for (int i = x->ib; i < x->ie; i++) {
     double xx = (i + .5) * dx;
     F1(x, i) = cos(xx);
     F1(neg_cos, i) = - cos(xx);
