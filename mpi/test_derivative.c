@@ -23,31 +23,6 @@ set_sine(struct fld1d *x, double dx)
 }
 
 // ----------------------------------------------------------------------
-// fill_ghosts
-//
-// fills the ghost cells at either end of x
-
-static void
-fill_ghosts(struct fld1d *x)
-{
-  int rank, size;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  MPI_Comm_size(MPI_COMM_WORLD, &size);
-
-  int ib = x->ib, ie = x->ie;
-  // the MPI ranks of our right and left neighbors
-  int rank_right = (rank + 1) % size, rank_left = (rank + size - 1) % size;
-
-  MPI_Send(&F1(x, ib  ), 1, MPI_DOUBLE, rank_left , 111, MPI_COMM_WORLD);
-  MPI_Send(&F1(x, ie-1), 1, MPI_DOUBLE, rank_right, 111, MPI_COMM_WORLD);
-
-  MPI_Recv(&F1(x, ie  ), 1, MPI_DOUBLE, rank_right, 111, MPI_COMM_WORLD,
-	   MPI_STATUS_IGNORE);
-  MPI_Recv(&F1(x, ib-1), 1, MPI_DOUBLE, rank_left , 111, MPI_COMM_WORLD,
-	   MPI_STATUS_IGNORE);
-}
-
-// ----------------------------------------------------------------------
 // calc_derivative
 //
 // calculates a 2nd order centered difference approximation to the derivative
@@ -55,7 +30,7 @@ fill_ghosts(struct fld1d *x)
 static void
 calc_derivative(struct fld1d *d, struct fld1d *x, double dx)
 {
-  fill_ghosts(x);
+  fld1d_fill_ghosts_periodic(x);
 
   for (int i = d->ib; i < d->ie; i++) {
     F1(d, i) = (F1(x, i+1) - F1(x, i-1)) / (2. * dx);

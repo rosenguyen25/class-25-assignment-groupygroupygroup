@@ -92,3 +92,29 @@ fld1d_axpy(struct fld1d *y, double alpha, struct fld1d *x, int ib, int ie)
     F1(y, i) += alpha * F1(x, i);
   }
 }
+
+// ----------------------------------------------------------------------
+// fld1d_fill_ghosts_periodic
+//
+// fills the ghost cells at either end of x
+
+void
+fld1d_fill_ghosts_periodic(struct fld1d *x)
+{
+  int rank, size;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+  int ib = x->ib, ie = x->ie;
+  // the MPI ranks of our right and left neighbors
+  int rank_right = (rank + 1) % size, rank_left = (rank + size - 1) % size;
+
+  MPI_Send(&F1(x, ib  ), 1, MPI_DOUBLE, rank_left , 111, MPI_COMM_WORLD);
+  MPI_Send(&F1(x, ie-1), 1, MPI_DOUBLE, rank_right, 111, MPI_COMM_WORLD);
+
+  MPI_Recv(&F1(x, ie  ), 1, MPI_DOUBLE, rank_right, 111, MPI_COMM_WORLD,
+	   MPI_STATUS_IGNORE);
+  MPI_Recv(&F1(x, ib-1), 1, MPI_DOUBLE, rank_left , 111, MPI_COMM_WORLD,
+	   MPI_STATUS_IGNORE);
+}
+

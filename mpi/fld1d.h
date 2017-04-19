@@ -33,5 +33,6 @@ void fld1d_destroy(struct fld1d *v);
 bool fld1d_is_almost_equal(struct fld1d *a, struct fld1d *b, double eps);
 void fld1d_write(struct fld1d *x, const char *filename, double dx);
 void fld1d_axpy(struct fld1d *y, double alpha, struct fld1d *x, int ib, int ie);
+void fld1d_fill_ghosts_periodic(struct fld1d *x);
 
 #endif
