@@ -77,6 +77,13 @@ main(int argc, char **argv)
 
   // time integration loop
   double tbeg = MPI_Wtime();
+  double t_rhs = 0.;
+  double t_axpy = 0.;
+  double t_out = 0.;
+  int c_rhs = 0;
+  int c_axpy = 0;
+  int c_out = 0;
+  
   int n = 0; // step counter
   int out_cnt = 0; // counter for output
   double time_next_out = 0.; // time for next output
@@ -84,6 +91,7 @@ main(int argc, char **argv)
   while (time <= max_time) {
     // write out current solution every so often
     if (out_every && time >= time_next_out) {
+      t_out -= MPI_Wtime();
       char fname[100];
       snprintf(fname, 100, "x%d", out_cnt++);
       //printf("step %d time %g: Writing output \"%s\"\n", n, time, fname);
@@ -91,16 +99,24 @@ main(int argc, char **argv)
       while (time_next_out <= time) {
         time_next_out += out_every;
       }
+      t_out += MPI_Wtime();
+      c_out++;
     }
 
     // A simple forward Euler step x^{n+1} = x^{n} + dt * rhs(x^n)
     // works fine for integrating this equation:
 
     // calculate rhs first
+    t_rhs -= MPI_Wtime();
     heat_eqn_calc_rhs(x, rhs, dx, kappa);
+    t_rhs += MPI_Wtime();
+    c_rhs++;
 
     // then update solution: x += dt * rhs
+    t_axpy -= MPI_Wtime();
     fld1d_axpy(x, dt, rhs);
+    t_axpy += MPI_Wtime();
+    c_axpy++;
     
     time += dt;
     n++;
@@ -111,6 +127,10 @@ main(int argc, char **argv)
   if (rank == 0) {
     printf("Integrated %d steps and wrote %d output files. Wall time = %g s\n",
 	   n, out_cnt, tend - tbeg);
+    printf("           TOTAL (s)      COUNT    AVG (us)\n");
+    printf("rhs     %12.6f %10d %12.6g\n", t_rhs, c_rhs, t_rhs * 1e6 / c_rhs);
+    printf("axpy    %12.6f %10d %12.6g\n", t_axpy, c_axpy, t_axpy * 1e6 / c_axpy);
+    printf("out     %12.6f %10d %12.6g\n", t_out, c_out, t_out * 1e6 / c_out);
   }
   
   fld1d_destroy(x);
