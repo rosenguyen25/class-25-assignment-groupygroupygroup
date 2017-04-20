@@ -25,11 +25,11 @@ main(int argc, char **argv)
   double *buf_recv = calloc(N, sizeof(double));
 
   if (rank == 0) {
-    MPI_Request req;
+    MPI_Request req, req2;
     MPI_Isend(buf_send, N, MPI_DOUBLE, 1, 1234, MPI_COMM_WORLD, &req);
-    MPI_Recv(buf_recv, N, MPI_DOUBLE, 1, 1234, MPI_COMM_WORLD,
-	     MPI_STATUS_IGNORE);
+    MPI_Irecv(buf_recv, N, MPI_DOUBLE, 1, 1234, MPI_COMM_WORLD, &req2);
     MPI_Wait(&req, MPI_STATUS_IGNORE);
+    MPI_Wait(&req2, MPI_STATUS_IGNORE);
   } else { // rank == 1
     MPI_Send(buf_send, N, MPI_DOUBLE, 0, 1234, MPI_COMM_WORLD);
     MPI_Recv(buf_recv, N, MPI_DOUBLE, 0, 1234, MPI_COMM_WORLD,
