@@ -26,8 +26,8 @@ main(int argc, char **argv)
 
   if (rank == 0) {
     MPI_Request reqs[2];
-    MPI_Isend(buf_send, N, MPI_DOUBLE, 1, 1234, MPI_COMM_WORLD, &reqs[0]);
     MPI_Irecv(buf_recv, N, MPI_DOUBLE, 1, 1234, MPI_COMM_WORLD, &reqs[1]);
+    MPI_Isend(buf_send, N, MPI_DOUBLE, 1, 1234, MPI_COMM_WORLD, &reqs[0]);
     MPI_Waitall(2, reqs, MPI_STATUSES_IGNORE);
   } else { // rank == 1
     MPI_Send(buf_send, N, MPI_DOUBLE, 0, 1234, MPI_COMM_WORLD);
