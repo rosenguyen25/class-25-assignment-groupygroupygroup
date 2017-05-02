@@ -12,7 +12,8 @@ bin_PROGRAMS = \
 	test_derivative \
 	test_heat_eqn \
 	heat_eqn_solve \
-	mpi_dl_test
+	mpi_dl_test \
+	mpi_pingpong
 
 test_heat_eqn_SOURCES = \
 	test_heat_eqn.c \
@@ -21,6 +22,10 @@ test_heat_eqn_SOURCES = \
 heat_eqn_solve_SOURCES = \
 	heat_eqn_solve.c \
 	heat_eqn.c
+
+mpi_pingpong_SOURCES = \
+	mpi_pingpong.c \
+	params.c
 
 LDADD = libfld1d.a
 

@@ -12,6 +12,7 @@ test_derivative
 test_heat_eqn
 heat_eqn_solve
 mpi_dl_test
+mpi_pingpong
 
 .ipynb_checkpoints
 .deps
