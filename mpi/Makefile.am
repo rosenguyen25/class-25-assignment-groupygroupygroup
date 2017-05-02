@@ -13,7 +13,8 @@ bin_PROGRAMS = \
 	test_heat_eqn \
 	heat_eqn_solve \
 	mpi_dl_test \
-	mpi_pingpong
+	mpi_pingpong \
+	memory
 
 test_heat_eqn_SOURCES = \
 	test_heat_eqn.c \
@@ -25,6 +26,10 @@ heat_eqn_solve_SOURCES = \
 
 mpi_pingpong_SOURCES = \
 	mpi_pingpong.c \
+	params.c
+
+memory_SOURCES = \
+	memory.c \
 	params.c
 
 LDADD = libfld1d.a

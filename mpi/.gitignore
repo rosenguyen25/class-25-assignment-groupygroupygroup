@@ -13,6 +13,7 @@ test_heat_eqn
 heat_eqn_solve
 mpi_dl_test
 mpi_pingpong
+memory
 
 .ipynb_checkpoints
 .deps
